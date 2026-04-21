@@ -62,6 +62,7 @@ async function fetchPrerendered(apiUrl, request, settings) {
   if (settings.token) {
     headers['X-Prerender-Token'] = settings.token;
   }
+  headers['X-Prerender-Int-Type'] = 'Hapi';
   const response = await fetch(apiUrl, { headers, redirect: 'manual' });
   const body = await response.text();
   return { status: response.status, headers: response.headers, body };
