@@ -1,5 +1,18 @@
 'use strict';
 
+/**
+ * @typedef {{ status: number, headers: Headers, body: string }} PrerenderResponse
+ */
+
+/**
+ * @typedef {Object} PrerenderOptions
+ * @property {string} [token]
+ * @property {string} [serviceUrl]
+ * @property {string|null} [protocol]
+ * @property {(request: import('@hapi/hapi').Request) => Promise<PrerenderResponse|null>} [beforeRender]
+ * @property {(request: import('@hapi/hapi').Request, response: PrerenderResponse) => void|Promise<void>} [afterRender]
+ */
+
 const internals = {};
 
 internals.crawlerUserAgents = [
@@ -24,7 +37,7 @@ internals.defaults = {
   token: process.env.PRERENDER_TOKEN || null,
   protocol: null,
   beforeRender: async () => null,
-  afterRender: () => {}
+  afterRender: async () => {}
 };
 
 function isBot(userAgent) {
@@ -57,10 +70,14 @@ function buildApiUrl(request, settings) {
   return `${base}${protocol}://${request.headers.host}${pathname}${search}`;
 }
 
+/**
+ * @returns {Promise<PrerenderResponse>}
+ */
 async function fetchPrerendered(apiUrl, request, settings) {
   const headers = { 'User-Agent': request.headers['user-agent'] };
   if (settings.token) {
     headers['X-Prerender-Token'] = settings.token;
+    console.warn('Using Prerender.io API token for request');
   }
   headers['X-Prerender-Int-Type'] = 'Hapi';
   const response = await fetch(apiUrl, { headers, redirect: 'manual' });
@@ -70,14 +87,18 @@ async function fetchPrerendered(apiUrl, request, settings) {
 
 function buildResponse(h, prerendered) {
   const response = h.response(prerendered.body).code(prerendered.status).takeover();
+  const SKIP_HEADERS = new Set(['content-encoding', 'content-length', 'transfer-encoding', 'connection']);
   for (const [key, value] of prerendered.headers.entries()) {
-    response.header(key, value);
+    if (!SKIP_HEADERS.has(key.toLowerCase())) response.header(key, value);
   }
   return response;
 }
 
 exports.plugin = {
   pkg: require('./package.json'),
+  /**
+   * @param {PrerenderOptions} options
+   */
   async register(server, options) {
     const settings = { ...internals.defaults, ...options };
 
@@ -90,7 +111,7 @@ exports.plugin = {
       try {
         const apiUrl = buildApiUrl(request, settings);
         const prerendered = await fetchPrerendered(apiUrl, request, settings);
-        settings.afterRender(request, prerendered);
+        await settings.afterRender(request, prerendered);
         return buildResponse(h, prerendered);
       } catch (err) {
         console.error('Prerender error, falling back:', err.message);

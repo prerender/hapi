@@ -35,7 +35,7 @@ The plugin registers an `onRequest` extension that transparently proxies bot req
 | `serviceUrl` | `string` | `process.env.PRERENDER_SERVICE_URL` or `https://service.prerender.io/` | Prerender service URL (use this for self-hosted Prerender) |
 | `protocol` | `string` | `null` | Force a protocol (`http` or `https`). Defaults to the server's protocol |
 | `beforeRender` | `async function(request)` | `async () => null` | Called before each prerender request. Return a cached response object `{ status, headers, body }` to skip the Prerender.io call |
-| `afterRender` | `function(request, response)` | `() => {}` | Called after a successful prerender. Use this to cache the response |
+| `afterRender` | `async function(request, response)` | `async () => {}` | Called after a successful prerender. Use this to cache the response. Can be sync or async |
 
 ## Environment variables
 

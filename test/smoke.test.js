@@ -10,12 +10,18 @@ const BOT_UA = 'Mozilla/5.0 (compatible; Googlebot/2.1)';
 const BROWSER_UA = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36';
 const PRERENDERED_HTML = '<html><body>prerendered</body></html>';
 
+const originalFetch = global.fetch;
+
 function mockFetch(status = 200, body = PRERENDERED_HTML) {
   global.fetch = async () => ({
     status,
     headers: new Headers({ 'content-type': 'text/html' }),
     text: async () => body
   });
+}
+
+function restoreFetch() {
+  global.fetch = originalFetch;
 }
 
 async function createServer(options = {}) {
@@ -26,6 +32,10 @@ async function createServer(options = {}) {
   await server.initialize();
   return server;
 }
+
+afterEach(() => {
+  restoreFetch();
+});
 
 test('plugin registers without error', async () => {
   const server = Hapi.server();
