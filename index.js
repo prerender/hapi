@@ -77,7 +77,8 @@ async function fetchPrerendered(apiUrl, request, settings) {
   const headers = { 'User-Agent': request.headers['user-agent'] };
   if (settings.token) {
     headers['X-Prerender-Token'] = settings.token;
-    console.warn('Using Prerender.io API token for request');
+  } else {
+    console.warn('Prerender.io API token not provided');
   }
   headers['X-Prerender-Int-Type'] = 'Hapi';
   const response = await fetch(apiUrl, { headers, redirect: 'manual' });
