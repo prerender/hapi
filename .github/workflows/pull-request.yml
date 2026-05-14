@@ -22,4 +22,8 @@ jobs:
           cache: npm
 
       - run: npm ci
+
+      - name: Fetch contract mock server
+        run: curl -fsSL -o mock-server.mjs https://raw.githubusercontent.com/prerender/integration-contract/main/mock-server.mjs
+
       - run: npm test
