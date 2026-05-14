@@ -1,5 +1,8 @@
 'use strict';
 
+const { randomUUID } = require('node:crypto');
+const { version: PACKAGE_VERSION } = require('./package.json');
+
 /**
  * @typedef {{ status: number, headers: Headers, body: string }} PrerenderResponse
  */
@@ -81,6 +84,8 @@ async function fetchPrerendered(apiUrl, request, settings) {
     console.warn('Prerender.io API token not provided');
   }
   headers['X-Prerender-Int-Type'] = 'Hapi';
+  headers['X-Prerender-Int-Version'] = PACKAGE_VERSION;
+  headers['X-Prerender-Request-Id'] = randomUUID();
   const response = await fetch(apiUrl, { headers, redirect: 'manual' });
   const body = await response.text();
   return { status: response.status, headers: response.headers, body };
