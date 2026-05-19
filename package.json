@@ -1,0 +1,32 @@
+{
+  "name": "prerender-hapi",
+  "version": "1.0.0",
+  "description": "Hapi plugin for prerendering JavaScript-rendered pages for SEO via Prerender.io",
+  "author": "Prerender.io",
+  "license": "MIT",
+  "main": "index.js",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "keywords": [
+    "hapi",
+    "prerender",
+    "prerender.io",
+    "seo",
+    "ssr"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/prerender/integrations",
+    "directory": "prerender-hapi"
+  },
+  "peerDependencies": {
+    "@hapi/hapi": ">=21.0.0"
+  },
+  "devDependencies": {
+    "@hapi/hapi": "^21.4.8"
+  },
+  "scripts": {
+    "test": "node --test"
+  }
+}
