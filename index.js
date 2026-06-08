@@ -24,7 +24,7 @@ internals.crawlerUserAgents = [
   'embedly', 'quora link preview', 'showyoubot', 'outbrain',
   'pinterest', 'slackbot', 'developers.google.com/+/web/snippet',
   'w3c_validator', 'perplexity', 'oai-searchbot', 'chatgpt-user',
-  'gptbot', 'claudebot', 'amazonbot'
+  'gptbot', 'claudebot', 'amazonbot', 'iframely'
 ];
 
 internals.extensionsToIgnore = [
