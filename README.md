@@ -82,7 +82,7 @@ Requests are prerendered when **all** of the following are true:
 - The `User-Agent` matches a known bot/crawler (Googlebot, Bingbot, Twitterbot, GPTBot, ClaudeBot, etc.)  
   — OR the URL contains `_escaped_fragment_`  
   — OR the `X-Bufferbot` header is present
-- The URL does not end with a static asset extension (`.js`, `.css`, `.png`, etc.)
+- The URL does not end with a static asset extension (`.js`, `.css`, `.png`, `.woff2`, `.webp`, etc.) — matched case-insensitively
 
 Everything else passes through to your normal route handlers.
 

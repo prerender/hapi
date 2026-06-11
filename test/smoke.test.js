@@ -29,6 +29,8 @@ async function createServer(options = {}) {
   await server.register({ plugin, options });
   server.route({ method: 'GET', path: '/', handler: () => 'original' });
   server.route({ method: 'GET', path: '/style.css', handler: () => 'body{}' });
+  server.route({ method: 'GET', path: '/fonts/inter.woff2', handler: () => 'font-bytes' });
+  server.route({ method: 'GET', path: '/STYLES.CSS', handler: () => 'BODY{}' });
   await server.initialize();
   return server;
 }
@@ -62,6 +64,22 @@ test('static asset with bot UA is not prerendered', async () => {
   const res = await server.inject({ method: 'GET', url: '/style.css', headers: { 'user-agent': BOT_UA } });
   assert.equal(res.statusCode, 200);
   assert.equal(res.payload, 'body{}');
+});
+
+test('font asset with bot UA is not prerendered', async () => {
+  mockFetch(200, PRERENDERED_HTML);
+  const server = await createServer();
+  const res = await server.inject({ method: 'GET', url: '/fonts/inter.woff2', headers: { 'user-agent': BOT_UA } });
+  assert.equal(res.statusCode, 200);
+  assert.equal(res.payload, 'font-bytes');
+});
+
+test('uppercase static asset with bot UA is not prerendered', async () => {
+  mockFetch(200, PRERENDERED_HTML);
+  const server = await createServer();
+  const res = await server.inject({ method: 'GET', url: '/STYLES.CSS', headers: { 'user-agent': BOT_UA } });
+  assert.equal(res.statusCode, 200);
+  assert.equal(res.payload, 'BODY{}');
 });
 
 test('_escaped_fragment_ query triggers prerender for any user agent', async () => {
