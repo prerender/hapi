@@ -47,6 +47,8 @@ async function createServer(options = {}) {
   await server.register({ plugin, options: { serviceUrl: `${MOCK_URL}/`, token: TOKEN, ...options } });
   server.route({ method: 'GET', path: '/', handler: () => 'original' });
   server.route({ method: 'GET', path: '/styles.css', handler: () => 'body{}' });
+  server.route({ method: 'GET', path: '/fonts/inter.woff2', handler: () => 'font-bytes' });
+  server.route({ method: 'GET', path: '/STYLES.CSS', handler: () => 'BODY{}' });
   server.route({ method: 'GET', path: '/blog/{slug}', handler: () => 'original' });
   await server.initialize();
   return server;
@@ -103,6 +105,22 @@ test('browser request emits no outgoing request', async () => {
 test('static asset with bot UA emits no outgoing request', async () => {
   const server = await createServer();
   await server.inject({ method: 'GET', url: '/styles.css', headers: { 'user-agent': BOT_UA } });
+
+  const recorded = await getRecorded();
+  assert.equal(recorded.length, 0);
+});
+
+test('font asset with bot UA emits no outgoing request', async () => {
+  const server = await createServer();
+  await server.inject({ method: 'GET', url: '/fonts/inter.woff2', headers: { 'user-agent': BOT_UA } });
+
+  const recorded = await getRecorded();
+  assert.equal(recorded.length, 0);
+});
+
+test('uppercase static asset with bot UA emits no outgoing request', async () => {
+  const server = await createServer();
+  await server.inject({ method: 'GET', url: '/STYLES.CSS', headers: { 'user-agent': BOT_UA } });
 
   const recorded = await getRecorded();
   assert.equal(recorded.length, 0);
