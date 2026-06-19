@@ -17,8 +17,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git://github.com/prerender/integrations",
-    "directory": "prerender-hapi"
+    "url": "git+https://github.com/prerender/hapi.git"
   },
   "peerDependencies": {
     "@hapi/hapi": ">=21.0.0"
